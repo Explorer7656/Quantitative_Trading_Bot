@@ -2,18 +2,34 @@ import requests
 import json
 import os
 import time
-from logger import Logger
+from datetime import datetime
+from dotenv import load_dotenv
+
+from libs.logging_utils import get_logger, Logger
+
+load_dotenv('env/.env')
+API_KEY=os.getenv('API_KEY')
+SLEEP_SECONDS=float(os.getenv('SLEEP_SECONDS'))
+LOG_LEVEL = os.getenv('LOG_LEVEL')
+LOG_MSG_FORMAT =os.getenv('LOG_MSG_FORMAT')
+LOG_DATE_FORMAT =os.getenv('LOG_DATE_FORMAT')
+LOGS_PATH = os.getenv('LOGS_PATH')
+LOG_FILENAME = os.getenv('LOG_FILENAME')
+
+time_prefix = datetime.now().strftime('%Y-%m-%d')
+os.makedirs(LOGS_PATH, exist_ok=True)
+LOG_FILENAME = os.path.join(LOGS_PATH, time_prefix + '_' + LOG_FILENAME)
+logger = get_logger(LOG_LEVEL, LOG_MSG_FORMAT, LOG_DATE_FORMAT, LOG_FILENAME)
 
 
+
+OUTPUT_DIR=os.getenv('OUTPUT_DIR')
 if not os.path.exists(OUTPUT_DIR):
-    os.makedirs(OUTPUT_DIR)
-
-API_KEY = "WxPYF2obhO2X7s9Bcem8B1KW4l6FxH1i"  # Replace with your FMP free API key
-SLEEP_SECONDS = 1.5  # Sleep between requests to avoid rate limiting
-OUTPUT_DIR = "fundamentals_jsons"
+    os.makedirs(OUTPUT_DIR, exist_ok=True)
 
 def download_financials(logger: Logger, ticker: list[str], statement_type: str) -> None:
     url = f"https://financialmodelingprep.com/api/v3/{statement_type}/{ticker}?apikey={API_KEY}&period=annual"
+    logger.debug(url)
     try:
         response = requests.get(url)
         if response.status_code == 200:
@@ -51,6 +67,6 @@ if __name__ == '__main__':
 
     for ticker in tickers:
         for statement in financial_types:
-            download_financials(ticker, statement)
+            download_financials(logger ,ticker, statement)
 
     print("All annual financials downloaded.")

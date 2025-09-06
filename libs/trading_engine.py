@@ -1,10 +1,12 @@
 import alpaca_trade_api as tradeapi
+from dotenv import load_dotenv
 
+load_dotenc('env/.env')
 
 class TradingEngine:
     def __init__(self, api_key: str, secret_key: str, paper: bool = True):
-        base_url = "https://paper-api.alpaca.markets" if paper else "https://api.alpaca.markets"
-        self.api = tradeapi.REST('PKCOWE47DZA6I4ZC25PO', '8VJZenitqRwBKab39wvoFzWvwd9FdH4lyFhvndgU',
+        # self.base_url = "https://paper-api.alpaca.markets" if paper else "https://api.alpaca.markets"
+        self.api = tradeapi.REST(api_key, secret_key,
                                  'https://paper-api.alpaca.markets/v2', api_version="v2")
 
     def get_account_info(self):

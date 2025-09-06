@@ -7,7 +7,7 @@ from sklearn.linear_model import LinearRegression
 from sklearn.preprocessing import StandardScaler
 from datetime import datetime
 import os
-
+from dotenv import load_dotenv
 
 from libs.data_loader import get_stock_data, load_fundamentals
 from libs.bull_detector import detect_and_label_bull_runs
@@ -16,14 +16,11 @@ from libs.bull_detector import summarize_last_bull_runs
 from libs.stock_selector import calculate_ev_on_bull_runs
 from libs.logging_utils import get_logger, Logger
 
+load_dotenv('env/.env')
 
-LOG_LEVEL = "INFO"
-LOG_MSG_FORMAT = "%(asctime)s : %(levelname)s : %(module)s : %(funcName)s : %(lineno)s : %(message)s"
-LOG_DATE_FORMAT = "%H:%M:%S"
+
 time_prefix = datetime.now().strftime('%Y-%m-%d')
-LOGS_PATH = "logs"
 os.makedirs(LOGS_PATH, exist_ok=True)
-LOG_FILENAME = ".log"
 LOG_FILENAME = os.path.join(LOGS_PATH, time_prefix + '_' + LOG_FILENAME)
 logger = get_logger(LOG_LEVEL, LOG_MSG_FORMAT, LOG_DATE_FORMAT, LOG_FILENAME)
 
